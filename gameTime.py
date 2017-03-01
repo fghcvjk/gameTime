@@ -38,6 +38,11 @@ class Form(QWidget):
     def setStatusBar(self, a):
         pass
 
+    def closeEvent(self, a):
+        self.st.onExit()
+        self.st = None
+        super(Form, self).closeEvent(a)
+
     def tryAddGame(self):
         pass
 

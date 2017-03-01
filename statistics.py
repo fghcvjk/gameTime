@@ -19,6 +19,7 @@ class GameStatistics(object):
         self.num2game = {} #编号到游戏映射
         self.waitSaveGames = [] #等待存盘的游戏
         self.runGameList = [] #正在运行的游戏
+        self.isStartServer = isStartServer
         self.Form = Form
         self.maxNum = 0
         self.initGameTime()
@@ -28,7 +29,7 @@ class GameStatistics(object):
         self.lastOnSaveTime = 0
         self.lastSaveTime = 0
         # self.onTickList = [] #添加的定时活动
-        if isStartServer:
+        if self.isStartServer:
             self.onTick()
 
     def onTick(self):
@@ -36,17 +37,21 @@ class GameStatistics(object):
 
         if timestamp - self.lastUpTime > UP_ONLINE_TIME:
             self.upTime()
+            self.lastUpTime = timestamp
         if timestamp - self.lastOnSaveTime > AUTO_SAVE_TIME:
             self.onSaveTime()
+            self.lastOnSaveTime = timestamp
         if timestamp - self.lastSaveTime > SAVE_TIME:
             self.saveTime()
+            self.lastSaveTime = timestamp
 
         # for tickAction in self.onTickList:
             # if timestamp - tickAction['lastTime'] > tickAction['time']:
                 # tickAction['action']()
 
-        action = threading.Timer(0.1, self.onTick)
-        action.start()
+        if self.isStartServer:
+            action = threading.Timer(0.1, self.onTick)
+            action.start()
 
     # def addTick(self, action, time):
         # self.onTickList.append({'action':action, 'time':time, 'lastTime':0})
@@ -197,8 +202,9 @@ class GameStatistics(object):
             game = self.num2game[num]
             gameDataFile = codecs.open(GAME_DATA_FILE%(num), 'r')
             gameData = gameDataFile.readlines()
-            gameDataFile = codecs.open(GAME_DATA_FILE%(num), 'w')
             gameData[0] = GAME_DATA_HEAD%(game.name, game.path, int(game.allTime), game.num)
             #每日记录
+            gameDataFile = codecs.open(GAME_DATA_FILE%(num), 'w')
             gameDataFile.writelines(gameData)
+        self.isStartServer = False
 
