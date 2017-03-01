@@ -147,7 +147,7 @@ class GameStatistics(object):
         exeLists = self.getAllActionExe()
         upTimestamp = self.getTimestamp()
         for game in self.num2game.values():
-            # print 'game path:', game.path
+            print 'game path:', game.path
             if game.path in exeLists:
                 if game.num not in self.runGameList:
                     self.runGameList.append(game.num)

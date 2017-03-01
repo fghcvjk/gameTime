@@ -1,0 +1,1 @@
+pyinstaller -F gameTime.py -w -i ./res/ico64.ico

@@ -14,13 +14,16 @@ import rmGameUI
 
 from statistics import GameStatistics
 
+import copy
+
 class Form(QWidget):
     def __init__(self, parent=None):
         super(Form, self).__init__(parent)
 
         self.ui= mainUI.Ui_MainWindow()
         self.ui.setupUi(self)
-        self.setWindowTitle("BlancTrans")
+        self.setWindowTitle("GameTime")
+        self.setWindowIcon(QIcon('./res/ico64.ico'))
 
         self.ui.actionAddGame.triggered.connect(self.tryAddGame)
         self.ui.actionRmGame.triggered.connect(self.tryRmGame)
@@ -54,8 +57,9 @@ class Form(QWidget):
         self.rmGameForm.show() 
 
     def upOnlineTime(self):
+        runGameList = copy.deepcopy(self.st.runGameList)
         text = u''
-        for num in self.st.runGameList:
+        for num in runGameList:
             game = self.st.num2game[num]
             d, h, m, s = self.st.getPrintTime(game.playTime)
             onceTimeStr = '本次运行：%s小时%s分%s秒'%(h, m, s)
@@ -63,8 +67,17 @@ class Form(QWidget):
             d, h, m, s = self.st.getPrintTime(game.allTime)
             allTimestr = '总共运行：%s天%s小时%s分%s秒'%(d, h, m, s)
             allTimestr = allTimestr.decode('GBK')
-            text += u'%s\n%s\n%s\n'%(game.name, onceTimeStr, allTimestr)
-            text += u'----------'
+            typeText = '（运行中）'.decode('GBK')
+            text += u'%s%s\n%s\n%s\n'%(game.name, typeText, onceTimeStr, allTimestr)
+            text += u'----------\n'
+        for num in self.st.num2game.keys():
+            if num not in runGameList:
+                game = self.st.num2game[num]
+                d, h, m, s = self.st.getPrintTime(game.allTime)
+                allTimestr = '总共运行：%s天%s小时%s分%s秒'%(d, h, m, s)
+                allTimestr = allTimestr.decode('GBK')
+                text += u'%s\n%s\n'%(game.name, allTimestr)
+                text += u'----------\n'
         self.ui.textEdit.setText(text)
 
 class AddGameForm(QWidget):
@@ -74,6 +87,7 @@ class AddGameForm(QWidget):
         self.ui= addGameUI.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle("添加游戏".decode('GBK'))
+        self.setWindowIcon(QIcon('./res/ico64.ico'))
         self.mainUI = mainUI
 
         self.connect(self.ui.toolButtonPath, SIGNAL("clicked()"), self.addPath)
@@ -97,6 +111,13 @@ class AddGameForm(QWidget):
     def addGame(self):
         name = self.ui.lineEditName.text()
         path = self.ui.lineEditPath.text()
+        newPath = u''
+        for str in path:
+            if u'/' == str:
+                newPath += u'\\'
+            else:
+                newPath += str
+        path = newPath
         if name and path:
             self.mainUI.st.addGame(name, path)
         QMessageBox.information(self, "添加成功".decode('GBK'), "添加成功".decode('GBK'), QMessageBox.Ok, QMessageBox.Ok)
@@ -109,6 +130,7 @@ class RmGameForm(QWidget):
         self.ui= rmGameUI.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle("移除游戏".decode('GBK'))
+        self.setWindowIcon(QIcon('./res/ico64.ico'))
         self.mainUI = mainUI
         for num in self.mainUI.st.num2game.keys():
             game = self.mainUI.st.num2game[num]
