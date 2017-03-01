@@ -1,0 +1,1 @@
+pyside-uic mainUI.ui -o ../mainUI.py
