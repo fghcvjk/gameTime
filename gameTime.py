@@ -8,15 +8,51 @@ sys.setdefaultencoding('utf-8')
 from PySide.QtCore import *
 from PySide.QtGui import *
 
-from mainUI import Ui_MainWindow
+import mainUI
+import addGameUI
 
 from statistics import GameStatistics
+
+class AddGameForm(QWidget):
+    def __init__(self, parent=None, mainUI = None):
+        super(AddGameForm, self).__init__(parent)
+
+        self.ui= addGameUI.Ui_Form()
+        self.ui.setupUi(self)
+        self.setWindowTitle("添加游戏".decode('GBK'))
+        self.mainUI = mainUI
+
+        self.connect(self.ui.toolButtonPath, SIGNAL("clicked()"),self.addPath)
+        self.connect(self.ui.pushButtonGo, SIGNAL("clicked()"),self.addGame)
+
+    def setMenuBar(self, a):
+        pass
+
+    def setCentralWidget(self, a):
+        pass
+
+    def setStatusBar(self, a):
+        pass
+
+    def addPath(self):
+        absolute_path = QFileDialog.getOpenFileName(self, 'Open file', '.', "exe files (*.exe)") 
+        if absolute_path[0]:
+            showTest = absolute_path[0]
+            self.ui.lineEditPath.setText(showTest)
+
+    def addGame(self):
+        name = self.ui.lineEditName.text()
+        path = self.ui.lineEditPath.text()
+        if name and path:
+            self.mainUI.st.addGame(name, path)
+        QMessageBox.information(self, "添加成功".decode('GBK'), "添加成功".decode('GBK'), QMessageBox.Ok, QMessageBox.Ok)
+        self.close()
 
 class Form(QWidget):
     def __init__(self, parent=None):
         super(Form, self).__init__(parent)
 
-        self.ui= Ui_MainWindow()
+        self.ui= mainUI.Ui_MainWindow()
         self.ui.setupUi(self)
         self.setWindowTitle("BlancTrans")
 
@@ -44,7 +80,8 @@ class Form(QWidget):
         super(Form, self).closeEvent(a)
 
     def tryAddGame(self):
-        pass
+        self.addGameForm = AddGameForm(mainUI = self)
+        self.addGameForm.show() 
 
     def tryRmGame(self):
         pass
