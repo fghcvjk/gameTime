@@ -10,43 +10,9 @@ from PySide.QtGui import *
 
 import mainUI
 import addGameUI
+import rmGameUI
 
 from statistics import GameStatistics
-
-class AddGameForm(QWidget):
-    def __init__(self, parent=None, mainUI = None):
-        super(AddGameForm, self).__init__(parent)
-
-        self.ui= addGameUI.Ui_Form()
-        self.ui.setupUi(self)
-        self.setWindowTitle("添加游戏".decode('GBK'))
-        self.mainUI = mainUI
-
-        self.connect(self.ui.toolButtonPath, SIGNAL("clicked()"),self.addPath)
-        self.connect(self.ui.pushButtonGo, SIGNAL("clicked()"),self.addGame)
-
-    def setMenuBar(self, a):
-        pass
-
-    def setCentralWidget(self, a):
-        pass
-
-    def setStatusBar(self, a):
-        pass
-
-    def addPath(self):
-        absolute_path = QFileDialog.getOpenFileName(self, 'Open file', '.', "exe files (*.exe)") 
-        if absolute_path[0]:
-            showTest = absolute_path[0]
-            self.ui.lineEditPath.setText(showTest)
-
-    def addGame(self):
-        name = self.ui.lineEditName.text()
-        path = self.ui.lineEditPath.text()
-        if name and path:
-            self.mainUI.st.addGame(name, path)
-        QMessageBox.information(self, "添加成功".decode('GBK'), "添加成功".decode('GBK'), QMessageBox.Ok, QMessageBox.Ok)
-        self.close()
 
 class Form(QWidget):
     def __init__(self, parent=None):
@@ -84,7 +50,8 @@ class Form(QWidget):
         self.addGameForm.show() 
 
     def tryRmGame(self):
-        pass
+        self.rmGameForm = RmGameForm(mainUI = self)
+        self.rmGameForm.show() 
 
     def upOnlineTime(self):
         text = u''
@@ -99,6 +66,71 @@ class Form(QWidget):
             text += u'%s\n%s\n%s\n'%(game.name, onceTimeStr, allTimestr)
             text += u'----------'
         self.ui.textEdit.setText(text)
+
+class AddGameForm(QWidget):
+    def __init__(self, parent=None, mainUI = None):
+        super(AddGameForm, self).__init__(parent)
+
+        self.ui= addGameUI.Ui_Form()
+        self.ui.setupUi(self)
+        self.setWindowTitle("添加游戏".decode('GBK'))
+        self.mainUI = mainUI
+
+        self.connect(self.ui.toolButtonPath, SIGNAL("clicked()"), self.addPath)
+        self.connect(self.ui.pushButtonGo, SIGNAL("clicked()"), self.addGame)
+
+    def setMenuBar(self, a):
+        pass
+
+    def setCentralWidget(self, a):
+        pass
+
+    def setStatusBar(self, a):
+        pass
+
+    def addPath(self):
+        absolute_path = QFileDialog.getOpenFileName(self, 'Open file', '.', "exe files (*.exe)") 
+        if absolute_path[0]:
+            showTest = absolute_path[0]
+            self.ui.lineEditPath.setText(showTest)
+
+    def addGame(self):
+        name = self.ui.lineEditName.text()
+        path = self.ui.lineEditPath.text()
+        if name and path:
+            self.mainUI.st.addGame(name, path)
+        QMessageBox.information(self, "添加成功".decode('GBK'), "添加成功".decode('GBK'), QMessageBox.Ok, QMessageBox.Ok)
+        self.close()
+
+class RmGameForm(QWidget):
+    def __init__(self, parent=None, mainUI = None):
+        super(RmGameForm, self).__init__(parent)
+
+        self.ui= rmGameUI.Ui_Form()
+        self.ui.setupUi(self)
+        self.setWindowTitle("移除游戏".decode('GBK'))
+        self.mainUI = mainUI
+        for num in self.mainUI.st.num2game.keys():
+            game = self.mainUI.st.num2game[num]
+            name = game.name
+            self.ui.comboBoxRmGame.addItem("%s:%s"%(num, name))
+
+        self.connect(self.ui.pushButtonGo, SIGNAL("clicked()"), self.rmGame)
+
+    def setMenuBar(self, a):
+        pass
+
+    def setCentralWidget(self, a):
+        pass
+
+    def setStatusBar(self, a):
+        pass
+
+    def rmGame(self):
+        num = self.ui.comboBoxRmGame.currentText().split(':')[0]
+        self.mainUI.st.removeGame(num)
+        QMessageBox.information(self, "移除成功".decode('GBK'), "移除成功".decode('GBK'), QMessageBox.Ok, QMessageBox.Ok)
+        self.close()
 
 app = QApplication(sys.argv)
 form = Form()
