@@ -15,15 +15,41 @@ from str_define import *
 
 class GameStatistics(object):
 
-    def __init__(self, isStartServer = True):
+    def __init__(self, isStartServer = True, Form = None):
         self.num2game = {} #编号到游戏映射
         self.waitSaveGames = [] #等待存盘的游戏
+        self.runGameList = [] #正在运行的游戏
+        self.Form = Form
         self.maxNum = 0
         self.initGameTime()
+
+        #定时活动相关
+        self.lastUpTime = 0
+        self.lastOnSaveTime = 0
+        self.lastSaveTime = 0
+        # self.onTickList = [] #添加的定时活动
         if isStartServer:
+            self.onTick()
+
+    def onTick(self):
+        timestamp = self.getTimestamp()
+
+        if timestamp - self.lastUpTime > UP_ONLINE_TIME:
             self.upTime()
+        if timestamp - self.lastOnSaveTime > AUTO_SAVE_TIME:
             self.onSaveTime()
+        if timestamp - self.lastSaveTime > SAVE_TIME:
             self.saveTime()
+
+        # for tickAction in self.onTickList:
+            # if timestamp - tickAction['lastTime'] > tickAction['time']:
+                # tickAction['action']()
+
+        action = threading.Timer(0.1, self.onTick)
+        action.start()
+
+    # def addTick(self, action, time):
+        # self.onTickList.append({'action':action, 'time':time, 'lastTime':0})
 
     def initGameTime(self):
         try:
@@ -118,6 +144,8 @@ class GameStatistics(object):
         for game in self.num2game.values():
             # print 'game path:', game.path
             if game.path in exeLists:
+                if game.num not in self.runGameList:
+                    self.runGameList.append(game.num)
                 if game.isStart:
                     game.playTime += upTimestamp - game.tickTime
                     game.allTime += upTimestamp - game.tickTime
@@ -134,19 +162,15 @@ class GameStatistics(object):
                     game.tickTime = self.getTimestamp()
                 game.tickTime = upTimestamp
             else:
+                if game.num in self.runGameList:
+                    self.runGameList.remove(game.num)
                 self.trySaveTime(game.num)
                 game.isStart = False
                 game.tickTime = 0
                 game.playTime = 0
 
-        upTimeAction = threading.Timer(UP_ONLINE_TIME, self.upTime)
-        upTimeAction.start()
-
     def onSaveTime(self):
         self.waitSaveGames.extend(self.num2game.keys())
-
-        saveTimeAction = threading.Timer(AUTO_SAVE_TIME, self.onSaveTime)
-        saveTimeAction.start()
 
     def trySaveTime(self, num = None):
         self.waitSaveGames.append(num)
@@ -167,9 +191,6 @@ class GameStatistics(object):
                 except:
                     pass
 
-        saveTimeAction = threading.Timer(SAVE_TIME, self.saveTime)
-        saveTimeAction.start()
-
     def onExit(self):
         #退出保存
         for num in self.num2game.keys():
@@ -180,5 +201,4 @@ class GameStatistics(object):
             gameData[0] = GAME_DATA_HEAD%(game.name, game.path, int(game.allTime), game.num)
             #每日记录
             gameDataFile.writelines(gameData)
-
 
