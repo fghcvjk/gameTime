@@ -150,7 +150,7 @@ class RmGameForm(QWidget):
 
     def rmGame(self):
         num = self.ui.comboBoxRmGame.currentText().split(':')[0]
-        self.mainUI.st.removeGame(num)
+        self.mainUI.st.tryRemoveGame(num)
         QMessageBox.information(self, "移除成功".decode('GBK'), "移除成功".decode('GBK'), QMessageBox.Ok, QMessageBox.Ok)
         self.close()
 

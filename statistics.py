@@ -3,6 +3,7 @@
 import os
 import psutil
 import threading
+from nt import chdir
 
 import time
 import datetime
@@ -19,6 +20,7 @@ class GameStatistics(object):
         self.num2game = {} #编号到游戏映射
         self.waitSaveGames = [] #等待存盘的游戏
         self.runGameList = [] #正在运行的游戏
+        self.rmList = [] #等待移除的游戏
         self.isStartServer = isStartServer
         self.Form = Form
         self.maxNum = 0
@@ -34,6 +36,10 @@ class GameStatistics(object):
     def onTick(self):
         if self.isStartServer:
             timestamp = self.getTimestamp()
+            rmList = copy.deepcopy(self.rmList) 
+            for num in rmList:
+                self.removeGame(num)
+                self.rmList.remove(num)
 
             if timestamp - self.lastUpTime > UP_ONLINE_TIME:
                 self.upTime()
@@ -93,10 +99,16 @@ class GameStatistics(object):
         game = Game(name, path, num, 0, self)
         self.num2game[num] = game
 
+    def tryRemoveGame(self, num):
+        self.rmList.append(num)
+
     def removeGame(self, num):
+        num = int(num)
         if num in self.num2game:
             del self.num2game[num]
-        os.remove(GAME_DATA_FILE%(num))
+        if num in self.runGameList:
+            self.runGameList.remove(num)
+        os.remove(GAME_DATA_FILE%num)
         gameListFile = codecs.open(GAME_LIST_FILE, 'r')
         systemData = gameListFile.readlines()
         gameNumList = eval(systemData[0])
