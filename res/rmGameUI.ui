@@ -61,7 +61,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>添加游戏</string>
+    <string>移除游戏</string>
    </property>
   </widget>
  </widget>
