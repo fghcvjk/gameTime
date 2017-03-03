@@ -21,6 +21,7 @@ class GameStatistics(object):
         self.waitSaveGames = [] #等待存盘的游戏
         self.runGameList = [] #正在运行的游戏
         self.rmList = [] #等待移除的游戏
+        self.addList = [] #等待添加的游戏
         self.isStartServer = isStartServer
         self.Form = Form
         self.maxNum = 0
@@ -30,12 +31,16 @@ class GameStatistics(object):
         self.lastUpTime = 0
         self.lastOnSaveTime = 0
         self.lastSaveTime = 0
-        if self.isStartServer:
-            self.onTick()
+        # if self.isStartServer:
+            # self.onTick()
 
     def onTick(self):
         if self.isStartServer:
             timestamp = self.getTimestamp()
+            addList = copy.deepcopy(self.addList)
+            for addData in addList:
+                self.addGame(addData['name'], addData['path'])
+                self.addList.remove(addData)
             rmList = copy.deepcopy(self.rmList) 
             for num in rmList:
                 self.removeGame(num)
@@ -51,8 +56,8 @@ class GameStatistics(object):
                 self.saveTime()
                 self.lastSaveTime = timestamp
 
-            action = threading.Timer(0.1, self.onTick)
-            action.start()
+            # action = threading.Timer(0.1, self.onTick)
+            # action.start()
 
     def initGameTime(self):
         try:
@@ -69,6 +74,9 @@ class GameStatistics(object):
             num= gameData['num']
             game = Game(gameData['name'], gameData['path'], num, gameData['time'], self, isStart = True)
             self.num2game[num] = game
+
+    def tryAddGame(self, name, path):
+        self.addList.append({'name':name, 'path':path})
 
     def addGame(self, name, path): #添加游戏
         num = self.maxNum + 1

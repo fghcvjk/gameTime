@@ -13,6 +13,7 @@ import addGameUI
 import rmGameUI
 
 from statistics import GameStatistics
+from str_define import *
 
 import copy
 
@@ -29,10 +30,10 @@ class Form(QWidget):
         self.ui.actionRmGame.triggered.connect(self.tryRmGame)
 
         self.st = GameStatistics(True, self)
+        self.lastUpTextTime = 0
         timer = QTimer(self)
-        self.connect(timer, SIGNAL("timeout()"), self.upOnlineTime)
-        timer.start(1000)
-        # self.st.addTick(self.upOnlineTime, 1000)
+        self.connect(timer, SIGNAL("timeout()"), self.onTick)
+        timer.start(TICK_TIME)
 
     def setMenuBar(self, a):
         pass
@@ -55,6 +56,13 @@ class Form(QWidget):
     def tryRmGame(self):
         self.rmGameForm = RmGameForm(mainUI = self)
         self.rmGameForm.show() 
+
+    def onTick(self):
+        self.st.onTick()
+        timestamp = self.st.getTimestamp()
+        if timestamp - self.lastUpTextTime > UP_TEXT_TIME:
+            self.upOnlineTime()
+            self.lastUpTextTime = timestamp
 
     def upOnlineTime(self):
         runGameList = copy.deepcopy(self.st.runGameList)
@@ -119,7 +127,7 @@ class AddGameForm(QWidget):
                 newPath += str
         path = newPath
         if name and path:
-            self.mainUI.st.addGame(name, path)
+            self.mainUI.st.tryAddGame(name, path)
         QMessageBox.information(self, "添加成功".decode('GBK'), "添加成功".decode('GBK'), QMessageBox.Ok, QMessageBox.Ok)
         self.close()
 
