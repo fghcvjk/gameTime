@@ -10,22 +10,25 @@ import datetime
 
 import copy
 import codecs
+import zipfile
 
 from game import Game
 from str_define import *
 
 class GameStatistics(object):
 
-    def __init__(self, isStartServer = True, Form = None):
+    def __init__(self, isStartServer = True, form = None):
         self.num2game = {} #编号到游戏映射
         self.waitSaveGames = [] #等待存盘的游戏
         self.runGameList = [] #正在运行的游戏
         self.rmList = [] #等待移除的游戏
         self.addList = [] #等待添加的游戏
         self.isStartServer = isStartServer
-        self.Form = Form
+        self.isNormalRun = 0 #上次是否正常关闭
+        self.form = form
         self.maxNum = 0
         self.initGameTime()
+        self.backPackData()
 
         #定时活动相关
         self.lastUpTime = 0
@@ -60,13 +63,17 @@ class GameStatistics(object):
             # action.start()
 
     def initGameTime(self):
+        if not os.path.exists(GAME_DATA_PATH):
+            os.makedirs(GAME_DATA_PATH)
         try:
             gameListFile = codecs.open(GAME_LIST_FILE, 'r')
             systemData = gameListFile.readlines()
         except:
+            self.isNormalRun = 1
             return
         gameNumList = eval(systemData[0])
         self.maxNum = int(systemData[1])
+        self.isNormalRun = int(systemData[2])
         for num in gameNumList:
             gameDataFile = codecs.open(GAME_DATA_FILE%(num), 'r')
             data = gameDataFile.readline()
@@ -74,6 +81,18 @@ class GameStatistics(object):
             num= gameData['num']
             game = Game(gameData['name'], gameData['path'], num, gameData['time'], self, isStart = True)
             self.num2game[num] = game
+
+    def backPackData(self):
+        if self.isNormalRun:
+            z = zipfile.ZipFile('backData.zip', 'w', zipfile.ZIP_DEFLATED)
+            startdir = GAME_DATA_PATH
+            for dirpath, dirnames, filenames in os.walk(startdir):
+                for filename in filenames:
+                    z.write(os.path.join(dirpath, filename))
+            z.close()
+        else:
+            errorMessage = '程序未正常关闭，时间数据可能已被丢失，数据已备份在backData.zip中，请联系作者处理'.decode('utf-8')
+            self.form.showErrorMessage(errorMessage)
 
     def tryAddGame(self, name, path):
         self.addList.append({'name':name, 'path':path})
@@ -85,9 +104,9 @@ class GameStatistics(object):
             gameDataFile = codecs.open(GAME_DATA_FILE%(num), 'r', )
             gameData = gameDataFile.readlines()
             if not gameData:
-                gameData = ['\n']
+                gameData = GAME_DATA_INIT_LIST
         except:
-            gameData = ['\n']
+            gameData = GAME_DATA_INIT_LIST
         gameData[0] = GAME_DATA_HEAD%(name, path, 0, num)
         gameDataFile = codecs.open(GAME_DATA_FILE%(num), 'w')
         gameDataFile.writelines(gameData)
@@ -95,13 +114,14 @@ class GameStatistics(object):
             gameListFile = codecs.open(GAME_LIST_FILE, 'r')
             systemData = gameListFile.readlines()
             if not systemData:
-                 systemData = [u'[]\n', u'\n']
+                 systemData = GAME_LIST_INIT_LIST
         except:
-            systemData = [u'[]\n', u'\n']
+            systemData = GAME_LIST_INIT_LIST
         gameNumList = eval(systemData[0])
         gameNumList.append(num)
         systemData[0] = SYSTEM_DATA_HEAD%gameNumList
         systemData[1] = SYSTEM_DATA_HEAD%self.maxNum
+        systemData[2] = SYSTEM_DATA_HEAD%self.isNormalRun
         gameListFile = codecs.open(GAME_LIST_FILE, 'w')
         gameListFile.writelines(systemData)
         game = Game(name, path, num, 0, self)
@@ -159,7 +179,7 @@ class GameStatistics(object):
         exeLists = self.getAllActionExe()
         upTimestamp = self.getTimestamp()
         for game in self.num2game.values():
-            print 'game path:', game.path
+            # print 'game path:', game.path
             if game.path in exeLists:
                 if game.num not in self.runGameList:
                     self.runGameList.append(game.num)
@@ -220,4 +240,16 @@ class GameStatistics(object):
             gameDataFile = codecs.open(GAME_DATA_FILE%(num), 'w')
             gameDataFile.writelines(gameData)
         self.isStartServer = False
+
+        try:
+            gameListFile = codecs.open(GAME_LIST_FILE, 'r')
+            systemData = gameListFile.readlines()
+            if not systemData:
+                 systemData = GAME_LIST_INIT_LIST
+        except:
+            systemData = GAME_LIST_INIT_LIST
+        gameNumList = eval(systemData[0])
+        systemData[2] = SYSTEM_DATA_HEAD%self.isNormalRun
+        gameListFile = codecs.open(GAME_LIST_FILE, 'w')
+        gameListFile.writelines(systemData)
 

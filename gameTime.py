@@ -16,8 +16,9 @@ from statistics import GameStatistics
 from str_define import *
 
 import copy
+import codecs
 
-class Form(QWidget):
+class Form(QWidget): #主界面
     def __init__(self, parent=None):
         super(Form, self).__init__(parent)
 
@@ -44,7 +45,7 @@ class Form(QWidget):
     def setStatusBar(self, a):
         pass
 
-    def closeEvent(self, a):
+    def closeEvent(self, a): #关闭时存档
         self.st.onExit()
         self.st = None
         super(Form, self).closeEvent(a)
@@ -57,14 +58,32 @@ class Form(QWidget):
         self.rmGameForm = RmGameForm(mainUI = self)
         self.rmGameForm.show() 
 
-    def onTick(self):
-        self.st.onTick()
-        timestamp = self.st.getTimestamp()
-        if timestamp - self.lastUpTextTime > UP_TEXT_TIME:
-            self.upOnlineTime()
-            self.lastUpTextTime = timestamp
+    def onTick(self): #心跳
+        try:
+            self.st.onTick()
+            timestamp = self.st.getTimestamp()
+            if timestamp - self.lastUpTextTime > UP_TEXT_TIME:
+                self.upOnlineTime()
+                self.lastUpTextTime = timestamp
+        except Exception as e:
+            print e
+            self.st.isNormalRun = 0
+            try:
+                gameListFile = codecs.open(GAME_LIST_FILE, 'r')
+                systemData = gameListFile.readlines()
+                if not systemData:
+                     systemData = [u'[]\n', u'\n', u'\n']
+            except:
+                systemData = [u'[]\n', u'\n', u'\n']
+            gameNumList = eval(systemData[0])
+            systemData[2] = SYSTEM_DATA_HEAD%0
+            gameListFile = codecs.open(GAME_LIST_FILE, 'w')
+            gameListFile.writelines(systemData)
 
-    def upOnlineTime(self):
+            errFile = file(ERR_LOG_FILE, 'w')
+            errFile.write(str(e))
+
+    def upOnlineTime(self): #刷新显示数据
         runGameList = copy.deepcopy(self.st.runGameList)
         text = u''
         for num in runGameList:
@@ -88,7 +107,10 @@ class Form(QWidget):
                 text += u'----------\n'
         self.ui.textEdit.setText(text)
 
-class AddGameForm(QWidget):
+    def showErrorMessage(self, errorMessage):
+        QMessageBox.warning (self, "Blanc message", errorMessage, QMessageBox.Ok, QMessageBox.Ok)
+
+class AddGameForm(QWidget): #添加游戏界面
     def __init__(self, parent=None, mainUI = None):
         super(AddGameForm, self).__init__(parent)
 
@@ -131,7 +153,7 @@ class AddGameForm(QWidget):
         QMessageBox.information(self, "添加成功".decode('GBK'), "添加成功".decode('GBK'), QMessageBox.Ok, QMessageBox.Ok)
         self.close()
 
-class RmGameForm(QWidget):
+class RmGameForm(QWidget): #移除游戏界面
     def __init__(self, parent=None, mainUI = None):
         super(RmGameForm, self).__init__(parent)
 
@@ -167,3 +189,5 @@ form = Form()
 form.show()
 # app.connect(b,SIGNAL("clicked()"),app,SLOT("quit()")) #点击b关闭
 app.exec_()
+
+
