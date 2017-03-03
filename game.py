@@ -2,7 +2,7 @@
 
 from str_define import *
 
-SPECIAL_STR = {u'\n': u'\\n', u'\t': u'\\t', u'\f': u'\\f', u'\r': u'\\r', u'\r': u'\\r', u'\r': u'\\r', u'\r': u'\\r', u'\r': u'\\r', u'\r': u'\\r', u'\r': u'\\r'}
+SPECIAL_STR = {u'\n': u'\\n', u'\t': u'\\t', u'\f': u'\\f', u'\r': u'\\r', u'\a': u'\\a', u'\b': u'\\b', u'\v': u'\\v', u'\0': u'\\0'}
 
 class Game(object):
 
