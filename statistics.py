@@ -28,33 +28,25 @@ class GameStatistics(object):
         self.lastUpTime = 0
         self.lastOnSaveTime = 0
         self.lastSaveTime = 0
-        # self.onTickList = [] #添加的定时活动
         if self.isStartServer:
             self.onTick()
 
     def onTick(self):
-        timestamp = self.getTimestamp()
-
-        if timestamp - self.lastUpTime > UP_ONLINE_TIME:
-            self.upTime()
-            self.lastUpTime = timestamp
-        if timestamp - self.lastOnSaveTime > AUTO_SAVE_TIME:
-            self.onSaveTime()
-            self.lastOnSaveTime = timestamp
-        if timestamp - self.lastSaveTime > SAVE_TIME:
-            self.saveTime()
-            self.lastSaveTime = timestamp
-
-        # for tickAction in self.onTickList:
-            # if timestamp - tickAction['lastTime'] > tickAction['time']:
-                # tickAction['action']()
-
         if self.isStartServer:
+            timestamp = self.getTimestamp()
+
+            if timestamp - self.lastUpTime > UP_ONLINE_TIME:
+                self.upTime()
+                self.lastUpTime = timestamp
+            if timestamp - self.lastOnSaveTime > AUTO_SAVE_TIME:
+                self.onSaveTime()
+                self.lastOnSaveTime = timestamp
+            if timestamp - self.lastSaveTime > SAVE_TIME:
+                self.saveTime()
+                self.lastSaveTime = timestamp
+
             action = threading.Timer(0.1, self.onTick)
             action.start()
-
-    # def addTick(self, action, time):
-        # self.onTickList.append({'action':action, 'time':time, 'lastTime':0})
 
     def initGameTime(self):
         try:
@@ -166,7 +158,7 @@ class GameStatistics(object):
                     game.isStart = True
                     game.tickTime = self.getTimestamp()
                 game.tickTime = upTimestamp
-            else:
+            elif game.isStart:
                 if game.num in self.runGameList:
                     self.runGameList.remove(game.num)
                 self.trySaveTime(game.num)
@@ -175,7 +167,7 @@ class GameStatistics(object):
                 game.playTime = 0
 
     def onSaveTime(self):
-        self.waitSaveGames.extend(self.num2game.keys())
+        self.waitSaveGames.extend(self.runGameList)
 
     def trySaveTime(self, num = None):
         self.waitSaveGames.append(num)
@@ -198,6 +190,7 @@ class GameStatistics(object):
 
     def onExit(self):
         #退出保存
+        print 'onExit'
         for num in self.num2game.keys():
             game = self.num2game[num]
             gameDataFile = codecs.open(GAME_DATA_FILE%(num), 'r')
