@@ -25,6 +25,10 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="ico.qrc">
+    <normaloff>:/ico/ico64.ico</normaloff>:/ico/ico64.ico</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTextEdit" name="textEdit">
     <property name="geometry">
@@ -69,6 +73,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="ico.qrc"/>
+ </resources>
  <connections/>
 </ui>

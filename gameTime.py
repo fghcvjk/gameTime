@@ -25,7 +25,7 @@ class Form(QWidget): #Ö÷½çÃæ
         self.ui= mainUI.Ui_MainWindow()
         self.ui.setupUi(self)
         self.setWindowTitle("GameTime")
-        self.setWindowIcon(QIcon('./res/ico64.ico'))
+        # self.setWindowIcon(QIcon('./res/ico64.ico'))
 
         self.ui.actionAddGame.triggered.connect(self.tryAddGame)
         self.ui.actionRmGame.triggered.connect(self.tryRmGame)

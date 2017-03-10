@@ -25,6 +25,10 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="ico.qrc">
+    <normaloff>:/ico/ico64.ico</normaloff>:/ico/ico64.ico</iconset>
+  </property>
   <widget class="QComboBox" name="comboBoxRmGame">
    <property name="geometry">
     <rect>
@@ -65,6 +69,8 @@
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="ico.qrc"/>
+ </resources>
  <connections/>
 </ui>

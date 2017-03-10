@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'addGameUI.ui'
 #
-# Created: Fri Mar 03 09:58:26 2017
+# Created: Fri Mar 10 14:15:37 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -16,6 +16,9 @@ class Ui_Form(object):
         Form.resize(400, 300)
         Form.setMinimumSize(QtCore.QSize(400, 300))
         Form.setMaximumSize(QtCore.QSize(400, 300))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/ico/ico64.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        Form.setWindowIcon(icon)
         self.toolButtonPath = QtGui.QToolButton(Form)
         self.toolButtonPath.setGeometry(QtCore.QRect(280, 150, 37, 18))
         self.toolButtonPath.setObjectName("toolButtonPath")
@@ -46,3 +49,4 @@ class Ui_Form(object):
         self.labelPath.setText(QtGui.QApplication.translate("Form", "路径：", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonGo.setText(QtGui.QApplication.translate("Form", "添加游戏", None, QtGui.QApplication.UnicodeUTF8))
 
+import ico_rc
