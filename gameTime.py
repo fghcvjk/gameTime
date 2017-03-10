@@ -117,7 +117,7 @@ class AddGameForm(QWidget): #添加游戏界面
         self.ui= addGameUI.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle("添加游戏".decode('GBK'))
-        self.setWindowIcon(QIcon('./res/ico64.ico'))
+        # self.setWindowIcon(QIcon('./res/ico64.ico'))
         self.mainUI = mainUI
 
         self.connect(self.ui.toolButtonPath, SIGNAL("clicked()"), self.addPath)
@@ -160,7 +160,7 @@ class RmGameForm(QWidget): #移除游戏界面
         self.ui= rmGameUI.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle("移除游戏".decode('GBK'))
-        self.setWindowIcon(QIcon('./res/ico64.ico'))
+        # self.setWindowIcon(QIcon('./res/ico64.ico'))
         self.mainUI = mainUI
         for num in self.mainUI.st.num2game.keys():
             game = self.mainUI.st.num2game[num]
