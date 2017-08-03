@@ -97,7 +97,9 @@ class Form(QWidget): #主界面
             typeText = '（运行中）'.decode('GBK')
             text += u'%s%s\n%s\n%s\n'%(game.name, typeText, onceTimeStr, allTimestr)
             text += u'----------\n'
-        for num in self.st.num2game.keys():
+        numList = self.st.num2game.keys()
+        numList.reverse()
+        for num in numList:
             if num not in runGameList:
                 game = self.st.num2game[num]
                 d, h, m, s = self.st.getPrintTime(game.allTime)
