@@ -153,14 +153,14 @@ class GameStatistics(object):
 
     def getPrintTime(self, playTime):
         playTime = playTime / 1000
-        d = int(playTime / 60 / 60 / 24)
-        playTime -= d * 24 * 60 * 60
+        # d = int(playTime / 60 / 60 / 24)
+        # playTime -= d * 24 * 60 * 60
         h = int(playTime / 60 / 60)
         playTime -= h * 60 * 60
         m = int(playTime / 60)
         playTime -= m * 60
         s = int(playTime)
-        return d, h, m, s
+        return h, m, s
 
     def getAllActionExe(self): #获得所有在运行的exe
         exeLists = []
@@ -187,11 +187,11 @@ class GameStatistics(object):
                     game.playTime += upTimestamp - game.tickTime
                     game.allTime += upTimestamp - game.tickTime
                     print game.name
-                    d, h, m, s = self.getPrintTime(game.playTime)
+                    h, m, s = self.getPrintTime(game.playTime)
                     str = '本次运行：%s小时%s分%s秒'%(h, m, s)
                     print str.decode(USE_CODE)
-                    d, h, m, s = self.getPrintTime(game.allTime)
-                    str = '总共运行：%s天%s小时%s分%s秒'%(d, h, m, s)
+                    h, m, s = self.getPrintTime(game.allTime)
+                    str = '总共运行：%s小时%s分%s秒'%(h, m, s)
                     print str.decode(USE_CODE)
                     print '-------------------------------------------'
                 else:

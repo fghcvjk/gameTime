@@ -88,11 +88,11 @@ class Form(QWidget): #主界面
         text = u''
         for num in runGameList:
             game = self.st.num2game[num]
-            d, h, m, s = self.st.getPrintTime(game.playTime)
+            h, m, s = self.st.getPrintTime(game.playTime)
             onceTimeStr = '本次运行：%s小时%s分%s秒'%(h, m, s)
             onceTimeStr = onceTimeStr.decode('GBK')
-            d, h, m, s = self.st.getPrintTime(game.allTime)
-            allTimestr = '总共运行：%s天%s小时%s分%s秒'%(d, h, m, s)
+            h, m, s = self.st.getPrintTime(game.allTime)
+            allTimestr = '总共运行：%s小时%s分%s秒'%(h, m, s)
             allTimestr = allTimestr.decode('GBK')
             typeText = '（运行中）'.decode('GBK')
             text += u'%s%s\n%s\n%s\n'%(game.name, typeText, onceTimeStr, allTimestr)
@@ -102,8 +102,8 @@ class Form(QWidget): #主界面
         for num in numList:
             if num not in runGameList:
                 game = self.st.num2game[num]
-                d, h, m, s = self.st.getPrintTime(game.allTime)
-                allTimestr = '总共运行：%s天%s小时%s分%s秒'%(d, h, m, s)
+                h, m, s = self.st.getPrintTime(game.allTime)
+                allTimestr = '总共运行：%s小时%s分%s秒'%(h, m, s)
                 allTimestr = allTimestr.decode('GBK')
                 text += u'%s\n%s\n'%(game.name, allTimestr)
                 text += u'----------\n'
