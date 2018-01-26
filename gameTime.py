@@ -25,6 +25,7 @@ class Form(QWidget): #主界面
         self.ui= mainUI.Ui_MainWindow()
         self.ui.setupUi(self)
         self.setWindowTitle("GameTime")
+        self.setWindowFlags(Qt.FramelessWindowHint) #去掉边框相关处理，配合mousePressEvent、mouseMoveEvent、mouseReleaseEvent的重写使用
         # self.setWindowIcon(QIcon('./res/ico64.ico'))
 
         self.ui.actionAddGame.triggered.connect(self.tryAddGame)
@@ -35,6 +36,20 @@ class Form(QWidget): #主界面
         timer = QTimer(self)
         self.connect(timer, SIGNAL("timeout()"), self.onTick)
         timer.start(TICK_TIME)
+
+    # def mousePressEvent(self, event):
+        # if event.button()== Qt.LeftButton:
+            # self.m_drag=True
+            # self.m_DragPosition=event.globalPos()-self.pos()
+            # event.accept()
+
+    # def mouseMoveEvent(self, QMouseEvent):
+        # if QMouseEvent.buttons() and Qt.LeftButton:
+            # self.move(QMouseEvent.globalPos()-self.m_DragPosition)
+            # QMouseEvent.accept()
+
+    # def mouseReleaseEvent(self, QMouseEvent):
+        # self.m_drag=False
 
     def setMenuBar(self, a):
         pass
