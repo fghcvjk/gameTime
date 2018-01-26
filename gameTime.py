@@ -26,6 +26,7 @@ class Form(QWidget): #主界面
         self.ui.setupUi(self)
         self.setWindowTitle("GameTime")
         self.setWindowFlags(Qt.FramelessWindowHint) #去掉边框相关处理，配合mousePressEvent、mouseMoveEvent、mouseReleaseEvent的重写使用
+        #还可以设置永在最上等处理
         # self.setWindowIcon(QIcon('./res/ico64.ico'))
 
         self.ui.actionAddGame.triggered.connect(self.tryAddGame)
