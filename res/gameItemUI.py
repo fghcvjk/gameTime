@@ -14,11 +14,9 @@ from PySide import QtCore, QtGui
 class GameItem(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
         super(GameItem, self).__init__(*args, **kwargs)
-        self.defaultWeight = 280
-        self.defaultHeight = 40
-        self.resize(self.defaultWeight, self.defaultHeight)
-        self.setMinimumSize(QtCore.QSize(self.defaultWeight, self.defaultHeight))
-        self.setMaximumSize(QtCore.QSize(self.defaultWeight, self.defaultHeight))
+        self.resize(280, 40)
+        self.setMinimumSize(QtCore.QSize(280, 40))
+        self.setMaximumSize(QtCore.QSize(280, 40))
 
         #添加自定义控件
         self.startButton = QtGui.QPushButton(self)
@@ -36,8 +34,4 @@ class GameItem(QtGui.QWidget):
         self.timeLabe.setMaximumSize(QtCore.QSize(220, 16))
         self.timeLabe.setText('timeLabe')
         self.timeLabe.setGeometry(QtCore.QRect(50, 20, 220, 16))
-
-    def setMyPosition(self, position):
-        positionW, positionH = position
-        self.setGeometry(QtCore.QRect(positionW, positionH, self.defaultWeight, self.defaultHeight))
 

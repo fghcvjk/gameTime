@@ -27,7 +27,7 @@ class Form(QWidget): #Ö÷½çÃæ
         # self.setWindowIcon(QIcon('./res/ico64.ico'))
         # gameItem = gameItemUI.GameItem(self.ui.centralwidget)
         # self.ui.gameItem = gameItem
-        # self.ui.gameItem.setMyPosition((0, 25))
+        # self.ui.gameItem.move(0, 25)
 
         self.ui.actionAddGame.triggered.connect(self.tryAddGame)
         self.ui.actionRmGame.triggered.connect(self.tryRmGame)
