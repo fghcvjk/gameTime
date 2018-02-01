@@ -10,7 +10,7 @@ from PySide.QtGui import *
 
 from statistics import GameStatistics
 from str_define import *
-from res import mainUI, addGameUI, rmGameUI
+from res import mainUI, addGameUI, rmGameUI, gameItemUI
 
 import copy
 import codecs
@@ -25,6 +25,9 @@ class Form(QWidget): #主界面
         # self.setWindowFlags(Qt.FramelessWindowHint) #去掉边框相关处理，配合mousePressEvent、mouseMoveEvent、mouseReleaseEvent的重写使用
         #还可以设置永在最上等处理
         # self.setWindowIcon(QIcon('./res/ico64.ico'))
+        # gameItem = gameItemUI.GameItem(self.ui.centralwidget)
+        # self.ui.gameItem = gameItem
+        # self.ui.gameItem.setMyPosition((0, 25))
 
         self.ui.actionAddGame.triggered.connect(self.tryAddGame)
         self.ui.actionRmGame.triggered.connect(self.tryRmGame)
