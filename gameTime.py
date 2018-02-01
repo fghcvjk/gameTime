@@ -8,12 +8,9 @@ sys.setdefaultencoding('utf-8')
 from PySide.QtCore import *
 from PySide.QtGui import *
 
-import mainUI
-import addGameUI
-import rmGameUI
-
 from statistics import GameStatistics
 from str_define import *
+from res import mainUI, addGameUI, rmGameUI
 
 import copy
 import codecs
@@ -25,7 +22,7 @@ class Form(QWidget): #主界面
         self.ui= mainUI.Ui_MainWindow()
         self.ui.setupUi(self)
         self.setWindowTitle("GameTime")
-        self.setWindowFlags(Qt.FramelessWindowHint) #去掉边框相关处理，配合mousePressEvent、mouseMoveEvent、mouseReleaseEvent的重写使用
+        # self.setWindowFlags(Qt.FramelessWindowHint) #去掉边框相关处理，配合mousePressEvent、mouseMoveEvent、mouseReleaseEvent的重写使用
         #还可以设置永在最上等处理
         # self.setWindowIcon(QIcon('./res/ico64.ico'))
 
