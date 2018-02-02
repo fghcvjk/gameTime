@@ -26,6 +26,7 @@ class GameStatistics(object):
         self.isStartServer = isStartServer
         self.isNormalRun = 0 #上次是否正常关闭
         self.form = form
+        self.ui = form.ui
         self.maxNum = 0
         self.initGameTime()
         self.backPackData()
@@ -79,8 +80,12 @@ class GameStatistics(object):
             data = gameDataFile.readline()
             gameData = eval(data)
             num= gameData['num']
-            game = Game(gameData['name'], gameData['path'], num, gameData['time'], self, isStart = True)
+            _name = gameData['name']
+            _path = gameData['path']
+            _time = gameData['time']
+            game = Game(_name, _path, num, _time, self, isStart = True)
             self.num2game[num] = game
+            self.ui.gameItems[num] = self.form.getGameItem(_name, _time, num, game, self)
 
     def backPackData(self):
         if self.isNormalRun:
@@ -126,14 +131,21 @@ class GameStatistics(object):
         gameListFile.writelines(systemData)
         game = Game(name, path, num, 0, self)
         self.num2game[num] = game
+        self.ui.gameItems[num] = self.form.getGameItem(name, 0, num, game, self)
 
     def tryRemoveGame(self, num):
         self.rmList.append(num)
 
     def removeGame(self, num):
-        num = int(num)
+        try:
+            num = int(num)
+        except:
+            return
         if num in self.num2game:
             del self.num2game[num]
+        if num in self.ui.gameItems:
+            self.ui.gameItems[num].close()
+            del self.ui.gameItems[num]
         if num in self.runGameList:
             self.runGameList.remove(num)
         os.remove(GAME_DATA_FILE%num)

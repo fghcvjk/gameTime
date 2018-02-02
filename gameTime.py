@@ -7,6 +7,7 @@ sys.setdefaultencoding('utf-8')
 
 from PySide.QtCore import *
 from PySide.QtGui import *
+from PyQt4.QtGui import QPixmap
 
 from statistics import GameStatistics
 from str_define import *
@@ -14,6 +15,9 @@ from res import mainUI, addGameUI, rmGameUI, gameItemUI
 
 import copy
 import codecs
+import win32gui
+import win32ui
+import traceback
 
 class Form(QWidget): #主界面
     def __init__(self, parent=None):
@@ -24,13 +28,10 @@ class Form(QWidget): #主界面
         self.setWindowTitle("GameTime")
         # self.setWindowFlags(Qt.FramelessWindowHint) #去掉边框相关处理，配合mousePressEvent、mouseMoveEvent、mouseReleaseEvent的重写使用
         #还可以设置永在最上等处理
-        # self.setWindowIcon(QIcon('./res/ico64.ico'))
-        # gameItem = gameItemUI.GameItem(self.ui.centralwidget)
-        # self.ui.gameItem = gameItem
-        # self.ui.gameItem.move(0, 25)
 
         self.ui.actionAddGame.triggered.connect(self.tryAddGame)
         self.ui.actionRmGame.triggered.connect(self.tryRmGame)
+        self.ui.gameItems = {}
 
         self.st = GameStatistics(True, self)
         self.lastUpTextTime = 0
@@ -51,6 +52,33 @@ class Form(QWidget): #主界面
 
     # def mouseReleaseEvent(self, QMouseEvent):
         # self.m_drag=False
+
+    def getGameItem(self, name, time, num, game, st):
+        gameItem = gameItemUI.GameItem(self.ui.centralwidget)
+        gameItem.nameLabe.setText(name.decode('GBK'))
+        h, m, s = st.getPrintTime(time)
+        allTimestr = '总共运行：%s小时%s分%s秒'%(h, m, s)
+        allTimestr = allTimestr.decode('GBK')
+        gameItem.timeLabe.setText(allTimestr)
+        gameItem.setToolTip4All(allTimestr)
+        try:
+            large, small = win32gui.ExtractIconEx(game.path, 0)
+            pixmap = QPixmap.fromWinHBITMAP(self.bitmapFromHIcon(large[0]), 2)
+            pixmap.save("./data/%s.ico"%num,"ico")
+            gameItem.startButton.setIcon(QIcon("./data/%s.ico"%num))
+        except:
+            pass
+        return gameItem
+
+    def bitmapFromHIcon(self, hIcon):
+        hdc = win32ui.CreateDCFromHandle(win32gui.GetDC(0))
+        hbmp = win32ui.CreateBitmap()
+        hbmp.CreateCompatibleBitmap(hdc, 32, 32)
+        hdc = hdc.CreateCompatibleDC()
+        hdc.SelectObject(hbmp)
+        hdc.DrawIcon((0, 0), hIcon)
+        hdc.DeleteDC()
+        return hbmp.GetHandle()
 
     def setMenuBar(self, a):
         pass
@@ -82,7 +110,7 @@ class Form(QWidget): #主界面
                 self.upOnlineTime()
                 self.lastUpTextTime = timestamp
         except Exception as e:
-            print e
+            print traceback.format_exc()
             self.st.isNormalRun = 0
             try:
                 gameListFile = codecs.open(GAME_LIST_FILE, 'r')
@@ -97,11 +125,12 @@ class Form(QWidget): #主界面
             gameListFile.writelines(systemData)
 
             errFile = file(ERR_LOG_FILE, 'w')
-            errFile.write(str(e))
+            errFile.write(str(traceback.format_exc()))
 
     def upOnlineTime(self): #刷新显示数据
         runGameList = copy.deepcopy(self.st.runGameList)
-        text = u''
+        weight = 0
+        height = 25
         for num in runGameList:
             game = self.st.num2game[num]
             h, m, s = self.st.getPrintTime(game.playTime)
@@ -111,8 +140,12 @@ class Form(QWidget): #主界面
             allTimestr = '总共运行：%s小时%s分%s秒'%(h, m, s)
             allTimestr = allTimestr.decode('GBK')
             typeText = '（运行中）'.decode('GBK')
-            text += u'%s%s\n%s\n%s\n'%(game.name, typeText, onceTimeStr, allTimestr)
-            text += u'----------\n'
+            gameItem = self.ui.gameItems[num]
+            gameItem.setToolTip4All(allTimestr)
+            gameItem.timeLabe.setText(onceTimeStr)
+            gameItem.move(weight, height)
+            gameItem.show()
+            weight, height = gameItem.getNextItemPosition(weight, height)
         numList = self.st.num2game.keys()
         numList.reverse()
         for num in numList:
@@ -121,9 +154,12 @@ class Form(QWidget): #主界面
                 h, m, s = self.st.getPrintTime(game.allTime)
                 allTimestr = '总共运行：%s小时%s分%s秒'%(h, m, s)
                 allTimestr = allTimestr.decode('GBK')
-                text += u'%s\n%s\n'%(game.name, allTimestr)
-                text += u'----------\n'
-        self.ui.textEdit.setText(text)
+                gameItem = self.ui.gameItems[num]
+                gameItem.setToolTip4All(allTimestr)
+                gameItem.timeLabe.setText(allTimestr)
+                gameItem.move(weight, height)
+                gameItem.show()
+                weight, height = gameItem.getNextItemPosition(weight, height)
 
     def showErrorMessage(self, errorMessage):
         QMessageBox.warning (self, "Blanc message", errorMessage, QMessageBox.Ok, QMessageBox.Ok)

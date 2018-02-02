@@ -7,16 +7,18 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-
+MAIN_HEIGHT = 40
+MAIN_WEIGHT = 280
+ADD_WEIGHT = MAIN_HEIGHT + 5
 
 from PySide import QtCore, QtGui
 
 class GameItem(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
         super(GameItem, self).__init__(*args, **kwargs)
-        self.resize(280, 40)
-        self.setMinimumSize(QtCore.QSize(280, 40))
-        self.setMaximumSize(QtCore.QSize(280, 40))
+        self.resize(MAIN_WEIGHT, MAIN_HEIGHT)
+        self.setMinimumSize(QtCore.QSize(MAIN_WEIGHT, MAIN_HEIGHT))
+        self.setMaximumSize(QtCore.QSize(MAIN_WEIGHT, MAIN_HEIGHT))
 
         #添加自定义控件
         self.startButton = QtGui.QPushButton(self)
@@ -34,4 +36,13 @@ class GameItem(QtGui.QWidget):
         self.timeLabe.setMaximumSize(QtCore.QSize(220, 16))
         self.timeLabe.setText('timeLabe')
         self.timeLabe.setGeometry(QtCore.QRect(50, 20, 220, 16))
+
+    def getNextItemPosition(self, weight, height):
+        return (weight, height+ADD_WEIGHT)
+
+    def setToolTip4All(self, tips):
+        self.startButton.setToolTip(tips)
+        self.nameLabe.setToolTip(tips)
+        self.timeLabe.setToolTip(tips)
+        self.setToolTip(tips)
 
