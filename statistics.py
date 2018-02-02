@@ -43,7 +43,7 @@ class GameStatistics(object):
             timestamp = self.getTimestamp()
             addList = copy.deepcopy(self.addList)
             for addData in addList:
-                self.addGame(addData['name'], addData['path'])
+                self.addGame(addData['name'], addData['path'], addData['startPath'])
                 self.addList.remove(addData)
             rmList = copy.deepcopy(self.rmList) 
             for num in rmList:
@@ -83,7 +83,11 @@ class GameStatistics(object):
             _name = gameData['name']
             _path = gameData['path']
             _time = gameData['time']
-            game = Game(_name, _path, num, _time, self, isStart = True)
+            try:
+                _startPath = gameData['startPath']
+            except:
+                _startPath = gameData['path']
+            game = Game(_name, _path, _startPath, num, _time, self, isStart = True)
             self.num2game[num] = game
             self.ui.gameItems[num] = self.form.getGameItem(_name, _time, num, game, self)
 
@@ -99,10 +103,10 @@ class GameStatistics(object):
             errorMessage = '程序未正常关闭，时间数据可能已被丢失，数据已备份在backData.zip中，请联系作者处理'.decode('utf-8')
             self.form.showErrorMessage(errorMessage)
 
-    def tryAddGame(self, name, path):
-        self.addList.append({'name':name, 'path':path})
+    def tryAddGame(self, name, path, startPath):
+        self.addList.append({'name':name, 'path':path, 'startPath':startPath})
 
-    def addGame(self, name, path): #添加游戏
+    def addGame(self, name, path, startPath): #添加游戏
         num = self.maxNum + 1
         self.maxNum = num
         try:
@@ -112,7 +116,7 @@ class GameStatistics(object):
                 gameData = GAME_DATA_INIT_LIST
         except:
             gameData = GAME_DATA_INIT_LIST
-        gameData[0] = GAME_DATA_HEAD%(name, path, 0, num)
+        gameData[0] = GAME_DATA_HEAD%(name, path, 0, num, startPath)
         gameDataFile = codecs.open(GAME_DATA_FILE%(num), 'w')
         gameDataFile.writelines(gameData)
         try:
@@ -129,7 +133,7 @@ class GameStatistics(object):
         systemData[2] = SYSTEM_DATA_HEAD%self.isNormalRun
         gameListFile = codecs.open(GAME_LIST_FILE, 'w')
         gameListFile.writelines(systemData)
-        game = Game(name, path, num, 0, self)
+        game = Game(name, path, startPath, num, 0, self)
         self.num2game[num] = game
         self.ui.gameItems[num] = self.form.getGameItem(name, 0, num, game, self)
 
@@ -232,7 +236,7 @@ class GameStatistics(object):
                     game = self.num2game[num]
                     gameDataFile = codecs.open(GAME_DATA_FILE%(num), 'r')
                     gameData = gameDataFile.readlines()
-                    gameData[0] = GAME_DATA_HEAD%(game.name, game.path, int(game.allTime), game.num)
+                    gameData[0] = GAME_DATA_HEAD%(game.name, game.path, int(game.allTime), game.num, game.startPath)
                     #每日记录
                     gameDataFile = codecs.open(GAME_DATA_FILE%(num), 'w')
                     gameDataFile.writelines(gameData)
@@ -247,7 +251,7 @@ class GameStatistics(object):
             game = self.num2game[num]
             gameDataFile = codecs.open(GAME_DATA_FILE%(num), 'r')
             gameData = gameDataFile.readlines()
-            gameData[0] = GAME_DATA_HEAD%(game.name, game.path, int(game.allTime), game.num)
+            gameData[0] = GAME_DATA_HEAD%(game.name, game.path, int(game.allTime), game.num, game.startPath)
             #每日记录
             gameDataFile = codecs.open(GAME_DATA_FILE%(num), 'w')
             gameDataFile.writelines(gameData)

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'rmGameUI.ui'
 #
-# Created: Thu Feb 01 10:19:03 2018
+# Created: Fri Feb 02 16:07:17 2018
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!

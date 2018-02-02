@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainUI.ui'
 #
-# Created: Thu Feb 01 10:19:02 2018
+# Created: Fri Feb 02 16:07:16 2018
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,15 +13,15 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(300, 700)
-        # MainWindow.setMinimumSize(QtCore.QSize(300, 700))
-        # MainWindow.setMaximumSize(QtCore.QSize(300, 700))
+        MainWindow.setMinimumSize(QtCore.QSize(300, 700))
+        MainWindow.setMaximumSize(QtCore.QSize(300, 700))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/ico/ico64.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.textEdit = QtGui.QTextEdit(self.centralwidget)
-        self.textEdit.setGeometry(QtCore.QRect(0, 20, 300, 1080))
+        self.textEdit.setGeometry(QtCore.QRect(0, 20, 300, 680))
         self.textEdit.setReadOnly(True)
         self.textEdit.setObjectName("textEdit")
         MainWindow.setCentralWidget(self.centralwidget)

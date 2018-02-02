@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 
-GAME_DATA_HEAD = "{'name':'%s', 'path':'%s', 'time':%s, 'num':%s}\n"
+GAME_DATA_HEAD = "{'name':'%s', 'path':'%s', 'time':%s, 'num':%s, 'startPath':'%s'}\n"
 SYSTEM_DATA_HEAD = u'%s\n'
 GAME_LIST_FILE = './data/gameList.data'
 GAME_LIST_INIT_LIST = [u'[]\n', u'0\n', u'\n']

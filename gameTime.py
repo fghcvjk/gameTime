@@ -175,6 +175,7 @@ class AddGameForm(QWidget): #添加游戏界面
         self.mainUI = mainUI
 
         self.connect(self.ui.toolButtonPath, SIGNAL("clicked()"), self.addPath)
+        self.connect(self.ui.toolButtonStartPath, SIGNAL("clicked()"), self.addStartPath)
         self.connect(self.ui.pushButtonGo, SIGNAL("clicked()"), self.addGame)
 
     def setMenuBar(self, a):
@@ -191,10 +192,19 @@ class AddGameForm(QWidget): #添加游戏界面
         if absolute_path[0]:
             showTest = absolute_path[0]
             self.ui.lineEditPath.setText(showTest)
+            if not self.ui.lineEditStartPath.text():
+                self.ui.lineEditStartPath.setText(showTest)
+
+    def addStartPath(self):
+        absolute_path = QFileDialog.getOpenFileName(self, 'Open file', '.', "exe files (*.exe)") 
+        if absolute_path[0]:
+            showTest = absolute_path[0]
+            self.ui.lineEditStartPath.setText(showTest)
 
     def addGame(self):
         name = self.ui.lineEditName.text()
         path = self.ui.lineEditPath.text()
+        startPath = self.ui.lineEditStartPath.text()
         newPath = u''
         for str in path:
             if u'/' == str:
@@ -203,7 +213,7 @@ class AddGameForm(QWidget): #添加游戏界面
                 newPath += str
         path = newPath
         if name and path:
-            self.mainUI.st.tryAddGame(name, path)
+            self.mainUI.st.tryAddGame(name, path, startPath)
         QMessageBox.information(self, "添加成功".decode('GBK'), "添加成功".decode('GBK'), QMessageBox.Ok, QMessageBox.Ok)
         self.close()
 
