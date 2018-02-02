@@ -54,6 +54,7 @@ class Form(QWidget): #主界面
         # self.m_drag=False
 
     def getGameItem(self, name, time, num, game, st):
+        path = game.path
         gameItem = gameItemUI.GameItem(self.ui.centralwidget)
         gameItem.nameLabe.setText(name.decode('GBK'))
         h, m, s = st.getPrintTime(time)
@@ -61,13 +62,12 @@ class Form(QWidget): #主界面
         allTimestr = allTimestr.decode('GBK')
         gameItem.timeLabe.setText(allTimestr)
         gameItem.setToolTip4All(allTimestr)
-        try:
+        if os.path.exists(path):
             large, small = win32gui.ExtractIconEx(game.path, 0)
             pixmap = QPixmap.fromWinHBITMAP(self.bitmapFromHIcon(large[0]), 2)
             pixmap.save("./data/%s.ico"%num,"ico")
             gameItem.startButton.setIcon(QIcon("./data/%s.ico"%num))
-        except:
-            pass
+        gameItem.connect(gameItem.startButton, SIGNAL("clicked()"), game.startGame)
         return gameItem
 
     def bitmapFromHIcon(self, hIcon):

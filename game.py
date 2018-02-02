@@ -1,5 +1,8 @@
 # -*- coding:utf-8 -*-
 
+import os
+import win32api
+
 from str_define import *
 
 SPECIAL_STR = {u'\n': u'\\n', u'\t': u'\\t', u'\f': u'\\f', u'\r': u'\\r', u'\a': u'\\a', u'\b': u'\\b', u'\v': u'\\v', u'\0': u'\\0'}
@@ -37,4 +40,11 @@ class Game(object):
         self.allTime = allTime #总在线时间
 
         self.date2time = {} #每日时间
+
+    def startGame(self):
+        if self.num not in self.server.runGameList and os.path.exists(self.path):
+            win32api.ShellExecute(0, 'open', self.path, '','',1)
+        else:
+            errorMessage = '此游戏已在运行中'.decode('utf-8')
+            self.server.form.showErrorMessage(errorMessage)
 
