@@ -11,7 +11,7 @@ __pycache__/
 *.zip
 *.exe
 *.data
-.data/*
+/data/*
 test/
 env/
 build/
