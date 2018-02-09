@@ -56,7 +56,11 @@ class Form(QWidget): #主界面
     def getGameItem(self, name, time, num, game, st):
         path = game.path
         gameItem = gameItemUI.GameItem(self.ui.centralwidget)
-        gameItem.nameLabe.setText(name.decode('GBK'))
+        try:
+            name = name.decode('utf-8')
+        except:
+            pass
+        gameItem.nameLabe.setText(name)
         h, m, s = st.getPrintTime(time)
         allTimestr = '总共运行：%s小时%s分%s秒'%(h, m, s)
         allTimestr = allTimestr.decode('GBK')
