@@ -70,6 +70,7 @@ class Form(QWidget): #Ö÷½çÃæ
             large, small = win32gui.ExtractIconEx(game.path, 0)
             pixmap = QPixmap.fromWinHBITMAP(self.bitmapFromHIcon(large[0]), 2)
             pixmap.save("./data/%s.ico"%num,"ico")
+        if os.path.exists("./data/%s.ico"%num):
             gameItem.startButton.setIcon(QIcon("./data/%s.ico"%num))
         gameItem.connect(gameItem.startButton, SIGNAL("clicked()"), game.startGame)
         return gameItem
