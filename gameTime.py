@@ -4,6 +4,7 @@ import os
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
+os.chdir(os.path.dirname(sys.argv[0]))
 
 from PySide.QtCore import *
 from PySide.QtGui import *
