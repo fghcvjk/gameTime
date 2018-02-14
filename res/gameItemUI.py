@@ -22,10 +22,12 @@ class GameItem(QtGui.QWidget):
 
         #添加自定义控件
         self.startButton = QtGui.QPushButton(self)
-        self.startButton.setText("")
+        self.startButton.setText('')
+        self.startButton.setToolTip('启动游戏'.decode('utf-8'))
         self.startButton.setMinimumSize(QtCore.QSize(32, 32))
         self.startButton.setMaximumSize(QtCore.QSize(32, 32))
         self.startButton.setGeometry(QtCore.QRect(10, 5, 32, 32))
+        self.startButton.setIconSize(QtCore.QSize(32, 32))
         self.nameLabe = QtGui.QLabel(self)
         self.nameLabe.setMinimumSize(QtCore.QSize(220, 16))
         self.nameLabe.setMaximumSize(QtCore.QSize(220, 16))
@@ -41,7 +43,7 @@ class GameItem(QtGui.QWidget):
         return (weight, height+ADD_WEIGHT)
 
     def setToolTip4All(self, tips):
-        self.startButton.setToolTip(tips)
+        # self.startButton.setToolTip(tips)
         self.nameLabe.setToolTip(tips)
         self.timeLabe.setToolTip(tips)
         self.setToolTip(tips)
